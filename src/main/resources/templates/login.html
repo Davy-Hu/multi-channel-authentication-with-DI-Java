@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http:/www.thymeleaf.org">
+   <head>
+      <meta charset="ISO-8859-1">
+      <meta name="google-signin-scope" content="profile email">
+      <meta name="google-signin-client_id" content="316649002787-pj5ruij4ppogj900cppl4sjjn4ov06c2.apps.googleusercontent.com">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+      <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+      <title>Login</title>
+   </head>
+   <body>
+      <div>
+         <form th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto;">
+            <div th:if="${param.error}">
+               <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+            </div>
+            <div th:if="${param.logout}">
+               <p class="text-warning">You have been logged out.</p>
+            </div>
+            <div class="border border-secondary p-3 rounded">
+               <p>
+                  <input type="email" name="email" class="form-control" placeholder="email" required autofocus/>
+               </p>
+               <p>
+                  <input type="password" name="password" class="form-control" placeholder="password" required />
+               </p>
+               <p>
+                  <input type="checkbox" name="remember-me" />&nbsp;Remember Me
+               </p>
+               <p>
+                  <input type="submit" value="Login" class="btn btn-primary" />
+               </p>
+            </div>
+         </form>
+      </div>
+      <div>
+      	<h3><a th:href="@{/register}">Register</a></h3>
+      </div>
+      <div>
+         <h4><a th:href="@{/oauth2/authorization/google}">Login with Google</h4>
+      </div>
+      <div>
+         <h4><a th:href="@{/oauth2/authorization/facebook}">Login with Facebook</h4>
+      </div>
+   </body>
+</html>
