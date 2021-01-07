@@ -2,8 +2,6 @@ package com.bill.security.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,10 +26,6 @@ public class User {
 
 	@Column(name = "last_name", nullable = false, length = 20)
 	private String lastName;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "auth_provider")
-	private AuthenticationProvider authProvider;
 	
 	public Long getId() {
 		return id;
@@ -59,14 +53,6 @@ public class User {
 
 	public String getFirstName() {
 		return firstName;
-	}
-
-	public AuthenticationProvider getAuthProvider() {
-		return authProvider;
-	}
-
-	public void setAuthProvider(AuthenticationProvider authProvider) {
-		this.authProvider = authProvider;
 	}
 
 	public void setFirstName(String firstName) {

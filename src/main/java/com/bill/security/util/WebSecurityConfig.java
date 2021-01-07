@@ -10,14 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.bill.security.authentication.IAuthenticate;
-import com.bill.security.oauth.CustomOAuth2UserService;
-import com.bill.security.oauth.OAuth2LoginSuccessHandler;
-import com.bill.security.user.CustomUserDetailsService;
-import com.bill.security.user.UserCredential;
 
 
 @Configuration
@@ -26,17 +19,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DataSource dataSource;
-
-	@Autowired
-	private CustomOAuth2UserService oAuth2UserService;
-	
-	@Autowired
-	private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-	
-	@Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
-    }
      
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -65,31 +47,37 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 	
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {	
+	protected void configure(HttpSecurity http) throws Exception {		
 		
-		http.authorizeRequests()
-		.antMatchers("/oauth2/**").permitAll()
-		.antMatchers("/register").permitAll()
-		.antMatchers("/process_register").permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .formLogin()
-            .loginPage("/login")   
-            .usernameParameter("email")
-            .permitAll()
-            .defaultSuccessUrl("/")
-        .and()
-        .oauth2Login()
-        	.loginPage("/login")
-        	.userInfoEndpoint().userService(oAuth2UserService)
-        	.and()
-        	.successHandler(oAuth2LoginSuccessHandler)
-        .and()
-        .logout().permitAll()
-        .and()
-        .rememberMe().key("12345");
+		http.authorizeRequests().antMatchers("/").permitAll();		
+		
+//		http.authorizeRequests()
+//		.antMatchers("/register").permitAll()
+//		.antMatchers("/process_register").permitAll()
+//        .anyRequest().authenticated()
+//        .and()
+//        .formLogin()
+//            .loginPage("/login")   
+//            .usernameParameter("email")
+//            .permitAll()
+//            .defaultSuccessUrl("/")
+//        .and()
+//        .logout().permitAll()
+//        .and()
+//        .rememberMe().key("12345");      
+//       
+//		http.authorizeRequests()
+//		.antMatchers("/oauth2/**").permitAll()
+//        .anyRequest().authenticated()
+//        .and()
+//        .oauth2Login()
+//        	.loginPage("/login")
+//        	.userInfoEndpoint().userService(oAuth2UserService)
+//        	.and()
+//        	.successHandler(oAuth2LoginSuccessHandler)
+//        .and()
+//        .logout().permitAll();
 	}
 
 	
 }
-//password:codejava

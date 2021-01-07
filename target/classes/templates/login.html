@@ -9,8 +9,9 @@
       <title>Login</title>
    </head>
    <body>
+   	<center>
       <div>
-         <form th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto;">
+         <form th:action="@{/login/mySQL}" method="get" style="max-width: 350px; margin: 0 auto;">
             <div th:if="${param.error}">
                <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
             </div>
@@ -37,10 +38,11 @@
       	<h3><a th:href="@{/register}">Register</a></h3>
       </div>
       <div>
-         <h4><a th:href="@{/oauth2/authorization/google}">Login with Google</h4>
+         <h4><a th:href="@{/login/google}">Login with Google</h4>
       </div>
       <div>
-         <h4><a th:href="@{/oauth2/authorization/facebook}">Login with Facebook</h4>
+         <h4><a th:href="@{/login/facebook}">Login with Facebook</h4>
       </div>
+   	</center>
    </body>
 </html>

@@ -1,11 +1,9 @@
 package com.bill.security.util;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.bill.security.authentication.IAuthenticate;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AuthenticateFactory {
 	
@@ -42,6 +40,11 @@ public class AuthenticateFactory {
 			return authenticationClassMap.get(source);
 		}
 		
+	}
+	
+	public static void main(String[]args) {
+		System.out.println(getAuthenticationClass("google"));
+		System.out.println(authenticationClassMap);
 	}
 	
 }

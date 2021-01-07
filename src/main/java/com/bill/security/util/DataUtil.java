@@ -1,10 +1,7 @@
 package com.bill.security.util;
 
-import java.util.Map;
-
-import com.bill.security.authentication.GoogleAuthenticate;
-
-import java.util.HashMap; 
+import java.util.HashMap;
+import java.util.Map; 
 
 public class DataUtil {
 
@@ -18,10 +15,5 @@ public class DataUtil {
 	public static String getFrom(String s) {
 		return authentication_class_map.get(s);
 	}
-	
-	public static void main(String [] args) {
-		GoogleAuthenticate g = new GoogleAuthenticate();
-		System.out.println(g.getClass().getName());
-	}
-	
+
 }
