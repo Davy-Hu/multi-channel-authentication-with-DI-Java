@@ -1,5 +1,6 @@
 package com.bill.security.util;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bill.security.authentication.IAuthenticate;
 import com.bill.security.user.User;
@@ -61,6 +63,24 @@ public class AppController {
 		userRepo.save(user);
 
 		return "register_success";
+	}
+
+	@GetMapping("/{source}/callback")
+	public String callback(@PathVariable String source, @RequestParam(required = false) String code)
+			throws IOException {
+		IAuthenticate authenticate = AuthenticateFactory.getAuthenticationClass(source);
+		if (authenticate.verifyUser(code)) {
+			return "redirect:/";
+		} else {
+			return "redirect:/login";
+		}
+
+	}
+	
+	@GetMapping("/getproperty/{property}")
+	@ResponseBody
+	public String getProperty(@PathVariable String property) {
+		return ResourceLoader.getProperty(property);
 	}
 
 }

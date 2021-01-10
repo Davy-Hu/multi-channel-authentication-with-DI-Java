@@ -18,9 +18,7 @@ public class ResourceLoader {
 	private static void LoadProperty(String path){
 		try (InputStream input = new FileInputStream(path)) {
             Properties prop = new Properties();
-            // load a properties file
             prop.load(input);
-            // get the property value and print it out
             if(properties == null) {
             	properties = new HashMap<>();
             }
@@ -46,6 +44,10 @@ public class ResourceLoader {
 		}else {
 			return properties.get(key);
 		}
+	}
+	
+	public static void main(String[]args) {
+		System.out.println(getProperty("authenticationurls"));
 	}
 	
 }

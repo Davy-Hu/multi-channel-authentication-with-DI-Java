@@ -9,40 +9,60 @@
       <title>Login</title>
    </head>
    <body>
-   	<center>
-      <div>
-         <form th:action="@{/login/mySQL}" method="get" style="max-width: 350px; margin: 0 auto;">
-            <div th:if="${param.error}">
-               <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
-            </div>
-            <div th:if="${param.logout}">
-               <p class="text-warning">You have been logged out.</p>
-            </div>
-            <div class="border border-secondary p-3 rounded">
-               <p>
-                  <input type="email" name="email" class="form-control" placeholder="email" required autofocus/>
-               </p>
-               <p>
-                  <input type="password" name="password" class="form-control" placeholder="password" required />
-               </p>
-               <p>
-                  <input type="checkbox" name="remember-me" />&nbsp;Remember Me
-               </p>
-               <p>
-                  <input type="submit" value="Login" class="btn btn-primary" />
-               </p>
-            </div>
-         </form>
-      </div>
-      <div>
-      	<h3><a th:href="@{/register}">Register</a></h3>
-      </div>
-      <div>
-         <h4><a th:href="@{/login/google}">Login with Google</h4>
-      </div>
-      <div>
-         <h4><a th:href="@{/login/facebook}">Login with Facebook</h4>
-      </div>
-   	</center>
+      <center>
+         <div>
+            <form id="/login/mySQL" method="get" style="max-width: 350px; margin: 0 auto;">
+               <div th:if="${param.error}">
+                  <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+               </div>
+               <div th:if="${param.logout}">
+                  <p class="text-warning">You have been logged out.</p>
+               </div>
+               <div class="border border-secondary p-3 rounded">
+                  <p>
+                     <input type="email" name="email" class="form-control" placeholder="email" required autofocus/>
+                  </p>
+                  <p>
+                     <input type="password" name="password" class="form-control" placeholder="password" required />
+                  </p>
+                  <p>
+                     <input type="checkbox" name="remember-me" />&nbsp;Remember Me
+                  </p>
+                  <p>
+                     <input type="submit" value="Login" class="btn btn-primary" />
+                  </p>
+               </div>
+            </form>
+         </div>
+         <div>
+            <h3><a id="/register">Register</a></h3>
+         </div>
+         <div>
+            <h3>
+            <a id="/login/google">Login with Google</h4>
+         </div>
+         <div>
+            <h3>
+            <a id="/login/facebook">Login with Facebook</h4>
+         </div>
+         <script type="text/javascript">
+            var xmlhttp = new XMLHttpRequest();
+                  xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                      var data = xmlhttp.responseText; 
+                      var arr = data.split(",");
+                      	arr.forEach(element=>{
+                      		if(element=="/login/mySQL"){
+                      			document.getElementById(element).action=element;
+                      		}else{
+                      			document.getElementById(element).href=element;
+                      		}
+                      	})
+                      }
+                    }
+                  xmlhttp.open("GET", "http://localhost:8080/getproperty/authenticationurls", true);
+                  xmlhttp.send();
+         </script>
+      </center>
    </body>
 </html>
