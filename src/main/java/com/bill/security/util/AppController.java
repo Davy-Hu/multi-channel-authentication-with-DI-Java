@@ -76,7 +76,7 @@ public class AppController {
 		}
 
 	}
-	
+
 	@GetMapping("/getproperty/{property}")
 	@ResponseBody
 	public String getProperty(@PathVariable String property) {
