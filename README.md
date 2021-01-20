@@ -2,6 +2,14 @@
 
 ## Introduction
 
+Authentication in a web application is the process of proving the user is the person who claimed he is. There are many ways to conduct a authentication. The most commons ones include:
+
+1. A password (something we know)
+2. A token (something we bring)
+3. A biometrics future (something you are)
+
+The usual process is that a user provides one of the above (one factor authentication) or two of the above (2 factors authentication) to the system. The system compared the proof the user provided with the one stored in the system. If the 2 matches, the user is authenticated.
+
 This tutorial serves as a demo for using multi-channel authentication in the java environment. This documentation contains both a detailed design of the process and implementation details.
 
 ## Programming Languages and Tools
@@ -22,15 +30,13 @@ Web Container: Apache Tomcat.
 
 ## Design
 
-### Authentication
+### Extensibility
 
-The authentication process starts when the user wishes to confirm their identity. Most of the time, this is done in three ways listed below:
+To conduct an authentication, the system must store the proofs of the user. There are different channels to do a password based authentication. The most common ones are store the user credentials in a local database, or LDAP, third party O'Auth. Sometimes, some organization intranet applications will require the convenience of auto login with Windows ID authentication.
 
-1. Biological
-2. Token
-3. Username/Password
+A good design should be easily extensible. To achieve the extensibility, we will use Dependency Injection design pattern. So in the future, if a new authentication mechanism is used, we just implement the new authentication by following the Dependency Injection interface, add the new implementation in the configuration, and place the newly implemented classes in a jar to the class path. Then the application will pick up the implementation without modifying the any other application code.
 
-For the purposes of this demo, I will only focus on the username/password method of authentication. The design behind this idea is that the user will send their information to the server, which will then check with the database whether this information is valid or not, and will return the appropriate response.
+For the purposes of this demo, I will only focus on the username/password methods/channels of authentication.
 
 ### Database
 
@@ -53,7 +59,9 @@ We will be using dependency injection to dynamically inject a channel to use whe
 
 #### Interface
 
-We will need an interface in order to create a general baseline for what the classes will look like. Because these classes will inherit from this interface, the interface will need to have all methods that the classes will need. For the purposes of this design, the only method needed is the authenticate method, which will be used to authenticate the user. Below is the structure of the interface.
+We will need an interface in order to create a general baseline for what the classes will look like. The interface that define the services. For the purposes of this design, the only method needed is the authenticate method, which will be used to authenticate the user. 
+
+The challenge here is that some authentication such as local database or LDAP authentication has the username and password passed as parameter, but some authentication such as third party O'Auth has no such parameters passed. We are going to overcome the challenge by designing the API which takes a parameter UserCredential object which has username and password as fields. For the channels which does not need username and password, the Credential object will be null.
 ```
 public interface IAuthentiate {
 
@@ -63,23 +71,22 @@ public interface IAuthentiate {
 
 }
 ```
-#### Classes
+#### Service Objects
 
-The authentication classes that will be used to authenticate users will all inherit from the Authentication interface. They will all follow a similar structure dictated by the interface, but will have their own minute differences due to the difference in implementation. These classes will be:
+The service objects are the authentication classes that will be used to authenticate users. It is also the extending point for new authentication channels. Whenever a new channel needs to be added, a new service class will be defined. Every service class will have its own unique implementation. In my example, these classes will be:
 
-- MySQLAuthenticate
-- GoogleAuthenticate
-- FacebookAuthenticate
+- MySQLAuthenticate for local database authentication
+- GoogleAuthenticate for Google OAuth
+- FacebookAuthenticate for Facebook OAuth
 
-We will also need to create a class called UserCredential. This user credential class will be a basic class that will hold an email and password if required. The reason this class is created is so that it follows the interface above and can be passed into any authentication method. In the case of google and facebook, UserCredential will just be false.
 
 #### Injector
 
-For the injector, we will first of all need a factory to generate our authentication methods. To do that, we will use a Map to contain each of our four methods. Rather than creating a map in the class, we will store the classes in a properties file, which will then be loaded in and cached.
+Injector is responsible for constructing the services and injecting them into the client. To make it better, we'll have a factory to generate our authentication classes. To make it even better, we will use a Map to cache all channels. To increase the flexibility and configurability, we will store the service classes in a properties file, which will then be loaded in and cached.
 
 #### Client
 
-When the user would like to authenticate themselves, they will be asked to choose an authentication channel: local database, third party OAuth such as Google or Facebook, or WindowsAuto which will be done automatically. Because all of the classes inherit from the IAuthenticate Interface and all implement the authenticate() method, the authentication logic will be different depending on which channel is selected by the user.
+The client is the object which uses the service(s). In our example, it is the AppController, in different service class is injected based on the varied selection of authentication channel from login UI.
 
 ## Implementation
 
@@ -124,7 +131,13 @@ We will use a properties file to store all the properties that we will want to i
 
 ### Resource Loader File
 
-Now that we&#39;ve created a properties file, we want to be able to read the file and extract information. Create a file called ResrouceLoader.java in /src/main/java/com/bill/security/util. The basic intuition for this would be to create a bunch of getter and setter methods to get and set each of the properties, however, this is very inefficient for a project that can have many properties. Therefore, another intuition is to create a map that stores all the keys and values, but this is still inefficient if there are many properties in the file. Thus, we want to create a solution that will read the properties file, and load the properties from the file the same way no matter how many elements there are. We will still use a map to store the keys and values, but when we load the properties, we will loop though the file to get all key value pairs.
+Now that we&#39;ve created a properties file, we want to be able to read the file and extract information. We will use a class called ResrouceLoader.java in /src/main/java/com/bill/security/util to achieve this. 
+
+There are varied implementations about this class. The basic intuition for this would be to create a bunch of getter and setter methods for each entry of the properties. However, this is very inefficient and not flexible for an application that have many properties (some may have hundreds of properties). 
+
+Another better way is to create a map that stores all the keys and values instead of getter/setter methods, but this is still inefficient if there are many properties in the file. 
+
+Our final solution is to read the properties file, and load the properties from the file the same way no matter how many elements there are. We will still use a map to store and cache the keys and values.
 
 ### Create User Classes and Models
 
